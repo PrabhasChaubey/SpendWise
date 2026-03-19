@@ -8,6 +8,9 @@ import cors from "cors";
 
 import { Env } from "./config/env.config.js";
 import { HTTPSTATUS } from "./config/http.config.js";
+import { errorHandler } from "./middlewares/errorHandler.middleware.js";
+import { BadRequestException } from "./utils/app-error.js";
+import { asyncHandler } from "./middlewares/asyncHandler.middleware.js";
 
 const app = express();
 
@@ -27,12 +30,15 @@ app.use(
 // Routes
 app.get(
   "/",
-  (req: Request, res: Response, next: NextFunction) => {
+  asyncHandler(async(req: Request, res: Response, next: NextFunction) => {
+    throw new BadRequestException("This is a test error");
     res.status(HTTPSTATUS.OK).json({
       message: "Lets build this project",
     });
-  }
+  })
 );
+
+app.use(errorHandler)
 
 // Server
 app.listen(Env.PORT, () => {
