@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import { HTTPSTATUS } from "../config/http.config.js";
 import { bulkDeleteTransactionSchema, bulkTransactionSchema, createTransactionSchema, transactionIdSchema, updateTransactionSchema } from "../validators/transaction.validator.js";
-import { bulkDeleteTransactionService, bulkTransactionService, createTransactionService, deleteTransactionService, duplicateTransactionService, getAllTransactionService, getTransactionByIdService, updateTransactionService } from "../servies/transaction.service.js";
+import { bulkDeleteTransactionService, bulkTransactionService, createTransactionService, deleteTransactionService, duplicateTransactionService, getAllTransactionService, getTransactionByIdService, scanReceiptService, updateTransactionService } from "../servies/transaction.service.js";
 import type { TransactionTypeEnum } from "../models/transaction.model.js";
 
 export const createTransactionController = asyncHandler(
@@ -137,3 +137,16 @@ export const bulkTransactionController = asyncHandler(
   }
 );
 
+
+export const scanReceiptController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const file = req?.file;
+
+    const result = await scanReceiptService(file);
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Reciept scanned successfully",
+      data: result,
+    });
+  }
+);

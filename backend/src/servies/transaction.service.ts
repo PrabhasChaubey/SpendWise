@@ -3,7 +3,9 @@ import TransactionModel from "../models/transaction.model.js";
 import { TransactionTypeEnum } from "../models/transaction.model.js";
 import { calculateNextOccurrence } from "../utils/helper.js";
 import type { CreateTransactionType, UpdateTransactionType } from "../validators/transaction.validator.js";
-import { NotFoundException } from "../utils/app-error.js";
+import { BadRequestException, NotFoundException } from "../utils/app-error.js";
+import { genAI, genAIModel } from "../config/google-ai.config.js";
+import { receiptPrompt } from "../utils/prompt.js";
 
 export const createTransactionService = async (
   body: CreateTransactionType,
@@ -256,5 +258,71 @@ export const bulkTransactionService = async (
     };
   } catch (error) {
     throw error;
+  }
+};
+
+
+export const scanReceiptService = async (
+  file: Express.Multer.File | undefined
+) => {
+  if (!file) throw new BadRequestException("No file uploaded");
+
+  try {
+    if (!file.path) throw new BadRequestException("failed to upload file");
+
+    console.log(file.path);
+
+    const responseData = await axios.get(file.path, {
+      responseType: "arraybuffer",
+    });
+    const base64String = Buffer.from(responseData.data).toString("base64");
+
+    if (!base64String) throw new BadRequestException("Could not process file");
+
+    const model = genAI.getGenerativeModel({ model: genAIModel });
+
+    const result = await model.generateContent({
+    contents: [
+        {
+        role: "user",
+        parts: [
+            { text: receiptPrompt },
+            { inlineData: { mimeType: file.mimetype, data: base64String } },
+        ],
+        },
+    ],
+    generationConfig: {
+        temperature: 0,
+        topP: 1,
+        responseMimeType: "application/json",
+    },
+    });
+
+    const response = result.response.text();
+    const cleanedText = response;
+
+    if (!cleanedText)
+      return {
+        error: "Could not read reciept  content",
+      };
+
+    const data = JSON.parse(cleanedText);
+
+    if (!data.amount || !data.date) {
+      return { error: "Reciept missing required information" };
+    }
+
+    return {
+      title: data.title || "Receipt",
+      amount: data.amount,
+      date: data.date,
+      description: data.description,
+      category: data.category,
+      paymentMethod: data.paymentMethod,
+      type: data.type,
+      receiptUrl: file.path,
+    };
+  } catch (error) {
+    return { error: "Reciept scanning  service unavailable" };
   }
 };
