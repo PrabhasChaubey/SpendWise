@@ -2,7 +2,7 @@ import axios from "axios";
 import TransactionModel from "../models/transaction.model.js";
 import { TransactionTypeEnum } from "../models/transaction.model.js";
 import { calculateNextOccurrence } from "../utils/helper.js";
-import type { CreateTransactionType } from "../validators/transaction.validator.js";
+import type { CreateTransactionType, UpdateTransactionType } from "../validators/transaction.validator.js";
 import { NotFoundException } from "../utils/app-error.js";
 
 export const createTransactionService = async (
@@ -140,4 +140,55 @@ export const duplicateTransactionService = async (
   } as any);
 
   return duplicated;
+};
+
+
+export const updateTransactionService = async (
+  userId: string,
+  transactionId: string,
+  body: UpdateTransactionType
+) => {
+  const existingTransaction = await TransactionModel.findOne({
+    _id: transactionId,
+    userId,
+  });
+  if (!existingTransaction)
+    throw new NotFoundException("Transaction not found");
+
+  const now = new Date();
+  const isRecurring = body.isRecurring ?? existingTransaction.isRecurring;
+
+  const date =
+    body.date !== undefined ? new Date(body.date) : existingTransaction.date;
+
+  const recurringInterval =
+    body.recurringInterval || existingTransaction.recurringInterval;
+
+  let nextRecurringDate: Date | undefined;
+
+  if (isRecurring && recurringInterval) {
+    const calulatedDate = calculateNextOccurrence(date, recurringInterval);
+
+    nextRecurringDate =
+      calulatedDate < now
+        ? calculateNextOccurrence(now, recurringInterval)
+        : calulatedDate;
+  }
+
+  existingTransaction.set({
+    ...(body.title && { title: body.title }),
+    ...(body.description && { description: body.description }),
+    ...(body.category && { category: body.category }),
+    ...(body.type && { type: body.type }),
+    ...(body.paymentMethod && { paymentMethod: body.paymentMethod }),
+    ...(body.amount !== undefined && { amount: Number(body.amount) }),
+    date,
+    isRecurring,
+    recurringInterval,
+    nextRecurringDate,
+  });
+
+  await existingTransaction.save();
+
+  return;
 };
