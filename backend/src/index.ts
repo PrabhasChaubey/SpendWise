@@ -16,6 +16,7 @@ import authRoutes from "./routes/auth.route.js";
 import passport from "passport";
 import { passportAuthenticateJwt } from "./config/passport.config.js";
 import userRoutes from "./routes/user.route.js";
+import transactionRoutes from "./routes/transaction.route.js";
 
 const app = express();
 
@@ -47,6 +48,8 @@ app.get(
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
+app.use(`${BASE_PATH}/transaction`, passportAuthenticateJwt, transactionRoutes);
+
 
 app.use(errorHandler)
 
