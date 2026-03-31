@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import { HTTPSTATUS } from "../config/http.config.js";
-import { createTransactionSchema } from "../validators/transaction.validator.js";
-import { createTransactionService, getAllTransactionService } from "../servies/transaction.service.js";
+import { createTransactionSchema, transactionIdSchema } from "../validators/transaction.validator.js";
+import { createTransactionService, getAllTransactionService, getTransactionByIdService } from "../servies/transaction.service.js";
 import type { TransactionTypeEnum } from "../models/transaction.model.js";
 
 export const createTransactionController = asyncHandler(
@@ -44,6 +44,20 @@ export const getAllTransactionController = asyncHandler(
     return res.status(HTTPSTATUS.OK).json({
       message: "Transaction fetched successfully",
       ...result,
+    });
+  }
+);
+
+export const getTransactionByIdController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const transactionId = transactionIdSchema.parse(req.params.id);
+
+    const transaction = await getTransactionByIdService(userId, transactionId);
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Transaction fetched successfully",
+      transaction,
     });
   }
 );
