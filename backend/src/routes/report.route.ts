@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { getAllReportsController, updateReportSettingController } from "../controllers/report.controller.js";
+import { generateReportController, getAllReportsController, updateReportSettingController } from "../controllers/report.controller.js";
 
 
 const reportRoutes = Router();
 
 reportRoutes.get("/all", getAllReportsController);
 reportRoutes.put("/update-setting", updateReportSettingController);
+reportRoutes.get("/generate", generateReportController);
 
 export default reportRoutes;
