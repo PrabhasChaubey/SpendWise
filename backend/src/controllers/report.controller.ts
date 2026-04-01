@@ -1,7 +1,9 @@
 import type { Request, Response } from "express";
 import { HTTPSTATUS } from "../config/http.config.js";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
-import { getAllReportsService } from "../servies/report.service.js";
+import { getAllReportsService, updateReportSettingService } from "../servies/report.service.js";
+import { updateReportSettingSchema } from "../validators/report.validator.js";
+
 
 
 export const getAllReportsController = asyncHandler(
@@ -18,6 +20,20 @@ export const getAllReportsController = asyncHandler(
     return res.status(HTTPSTATUS.OK).json({
       message: "Reports history fetched successfully",
       ...result,
+    });
+  }
+);
+
+
+export const updateReportSettingController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const body = updateReportSettingSchema.parse(req.body);
+
+    await updateReportSettingService(userId, body);
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Reports setting updated successfully",
     });
   }
 );
