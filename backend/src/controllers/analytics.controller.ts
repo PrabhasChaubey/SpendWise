@@ -2,7 +2,7 @@ import type { Request,Response } from "express";
 import { HTTPSTATUS } from "../config/http.config.js";
 import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import type { DateRangePreset } from "../enums/date-range.enum.js";
-import { summaryAnalyticsService } from "../servies/analytics.service.js";
+import { chartAnalyticsService, summaryAnalyticsService } from "../servies/analytics.service.js";
 
 export const summaryAnalyticsController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -28,3 +28,32 @@ export const summaryAnalyticsController = asyncHandler(
     });
   }
 );
+
+
+
+export const chartAnalyticsController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const { preset, from, to } = req.query;
+
+    const filter = {
+      dateRangePreset: preset as DateRangePreset,
+      customFrom: from ? new Date(from as string) : undefined,
+      customTo: to ? new Date(to as string) : undefined,
+    };
+
+    const chartData = await chartAnalyticsService(
+      userId,
+      filter.dateRangePreset,
+      filter.customFrom,
+      filter.customTo
+    );
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Chart fetched successfully",
+      data: chartData,
+    });
+  }
+);
+
+
