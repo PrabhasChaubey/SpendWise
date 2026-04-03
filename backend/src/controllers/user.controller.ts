@@ -16,6 +16,7 @@ export const getCurrentUserController = asyncHandler(
   }
 );
 
+
 export const updateUserController = asyncHandler(
   async (req: Request, res: Response) => {
     const body = updateUserSchema.parse(req.body);
