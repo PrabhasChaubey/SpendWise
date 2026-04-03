@@ -19,6 +19,7 @@ import userRoutes from "./routes/user.route.js";
 import transactionRoutes from "./routes/transaction.route.js";
 import { initializeCrons } from "./cron/index.js";
 import reportRoutes from "./routes/report.route.js";
+import analyticsRoutes from "./routes/analytics.route.js";
 
 
 const app = express();
@@ -55,7 +56,7 @@ app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
 app.use(`${BASE_PATH}/transaction`, passportAuthenticateJwt, transactionRoutes);
 app.use(`${BASE_PATH}/report`, passportAuthenticateJwt, reportRoutes);
-
+app.use(`${BASE_PATH}/analytics`, passportAuthenticateJwt, analyticsRoutes);
 
 app.use(errorHandler)
 
