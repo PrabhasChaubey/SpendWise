@@ -25,6 +25,7 @@ const LogoutDialog = ({ isOpen, setIsOpen }: LogoutDialogProps) => {
         navigate(AUTH_ROUTES.SIGN_IN);
       });
     };
+    
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
