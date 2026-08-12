@@ -39,16 +39,12 @@ app.use(
 );
 
 // Routes
-app.get(
-  "/",
-  asyncHandler(async(req: Request, res: Response, next: NextFunction) => {
-    throw new BadRequestException("This is a test error");
-    res.status(HTTPSTATUS.OK).json({
-      message: "Lets build this project",
-    });
-  })
-);
-
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "SpendWise API is running",
+  });
+});
 
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
@@ -63,9 +59,11 @@ app.use(errorHandler)
 app.listen(Env.PORT, async() => {
   await connctDatabase();
 
-  if (Env.NODE_ENV === "development") {
-    await initializeCrons();
-  }
+  // if (Env.NODE_ENV === "development") {
+  //   await initializeCrons();
+  // }
+
+  await initializeCrons();
 
   console.log(
     `Server is running on port ${Env.PORT} in ${Env.NODE_ENV} mode`

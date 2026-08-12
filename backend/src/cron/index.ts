@@ -6,7 +6,7 @@ export const initializeCrons = async () => {
 
     const jobs = startJobs();
 
-    console.log(`⏰ ${jobs.length} cron jobs intialized`);
+    //console.log(`⏰ ${jobs.length} cron jobs intialized`);
     return jobs;
     
   } catch (error) {
