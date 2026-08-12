@@ -4,8 +4,10 @@ import { asyncHandler } from "../middlewares/asyncHandler.middleware.js";
 import type { DateRangePreset } from "../enums/date-range.enum.js";
 import { chartAnalyticsService, expensePieChartBreakdownService, summaryAnalyticsService } from "../servies/analytics.service.js";
 
+
 export const summaryAnalyticsController = asyncHandler(
   async (req: Request, res: Response) => {
+
     const userId = req.user?._id;
 
     const { preset, from, to } = req.query;
@@ -15,6 +17,7 @@ export const summaryAnalyticsController = asyncHandler(
       customFrom: from ? new Date(from as string) : undefined,
       customTo: to ? new Date(to as string) : undefined,
     };
+
     const stats = await summaryAnalyticsService(
       userId,
       filter.dateRangePreset,
@@ -26,13 +29,14 @@ export const summaryAnalyticsController = asyncHandler(
       message: "Summary fetched successfully",
       data: stats,
     });
+
   }
 );
 
 
-
 export const chartAnalyticsController = asyncHandler(
   async (req: Request, res: Response) => {
+
     const userId = req.user?._id;
     const { preset, from, to } = req.query;
 
@@ -59,6 +63,7 @@ export const chartAnalyticsController = asyncHandler(
 
 export const expensePieChartBreakdownController = asyncHandler(
   async (req: Request, res: Response) => {
+    
     const userId = req.user?._id;
     const { preset, from, to } = req.query;
 

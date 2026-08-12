@@ -18,6 +18,7 @@ export const getAllReportsService = async (
     pageNumber: number;
   }
 ) => {
+
   const query: Record<string, any> = { userId };
 
   const { pageSize, pageNumber } = pagination;
@@ -53,6 +54,7 @@ export const updateReportSettingService = async (
   const existingReportSetting = await ReportSettingModel.findOne({
     userId,
   });
+
   if (!existingReportSetting)
     throw new NotFoundException("Report setting not found");
 
@@ -61,7 +63,9 @@ export const updateReportSettingService = async (
 
   if (isEnabled) {
     const currentNextReportDate = existingReportSetting.nextReportDate;
+
     const now = new Date();
+
     if (!currentNextReportDate || currentNextReportDate <= now) {
       nextReportDate = calulateNextReportDate(
         existingReportSetting.lastSentDate
@@ -87,6 +91,7 @@ export const generateReportService = async (
   fromDate: Date,
   toDate: Date
 ) => {
+
   const results = await TransactionModel.aggregate([
     {
       $match: {
@@ -96,6 +101,7 @@ export const generateReportService = async (
     },
     {
       $facet: {
+
         summary: [
           {
             $group: {
@@ -140,6 +146,7 @@ export const generateReportService = async (
             $limit: 5,
           },
         ],
+
       },
     },
     {
@@ -220,7 +227,6 @@ function calculateSavingRate(totalIncome: number, totalExpenses: number) {
 }
 
 
-
 async function generateInsightsAI({
   totalIncome,
   totalExpenses,
@@ -236,7 +242,9 @@ async function generateInsightsAI({
   categories: Record<string, { amount: number; percentage: number }>;
   periodLabel: string;
 }) {
+
   try {
+
     const prompt = reportInsightPrompt({
       totalIncome: convertToDollarUnit(totalIncome),
       totalExpenses: convertToDollarUnit(totalExpenses),
@@ -261,12 +269,14 @@ async function generateInsightsAI({
     });
 
     const response = result.response.text();
+
     const cleanedText = response?.replace(/```(?:json)?\n?/g, "").trim();
 
     if (!cleanedText) return [];
 
     const data = JSON.parse(cleanedText);
     return data;
+    
   } catch (error) {
     return [];
   }

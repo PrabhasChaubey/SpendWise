@@ -13,6 +13,7 @@ export const summaryAnalyticsService = async (
   customFrom?: Date,
   customTo?: Date
 ) => {
+
   const range = getDateRange(dateRangePreset, customFrom, customTo);
 
   const { from, to, value: rangeValue } = range;
@@ -194,6 +195,7 @@ export const summaryAnalyticsService = async (
     const [previous] = await TransactionModel.aggregate(prevPeriodPipeline);
 
     console.log(previous, "Prvious Data");
+
     if (previous) {
       const prevIncome = previous.totalIncome || 0;
       const prevExpenses = previous.totalExpenses || 0;
@@ -249,6 +251,7 @@ export const summaryAnalyticsService = async (
   };
 };
 
+
 function calaulatePercentageChange(previous: number, current: number) {
   if (previous === 0) return current === 0 ? 0 : 100;
   const changes = ((current - previous) / Math.abs(previous)) * 100;
@@ -264,6 +267,7 @@ export const chartAnalyticsService = async (
   customFrom?: Date,
   customTo?: Date
 ) => {
+
   const range = getDateRange(dateRangePreset, customFrom, customTo);
   const { from, to, value: rangeValue } = range;
 
@@ -283,6 +287,7 @@ export const chartAnalyticsService = async (
     //Group the transaction by date (YYYY-MM-DD)
     {
       $group: {
+
         _id: {
           $dateToString: {
             format: "%Y-%m-%d",
@@ -383,6 +388,7 @@ export const expensePieChartBreakdownService = async (
   customFrom?: Date,
   customTo?: Date
 ) => {
+
   const range = getDateRange(dateRangePreset, customFrom, customTo);
   const { from, to, value: rangeValue } = range;
 
@@ -408,8 +414,9 @@ export const expensePieChartBreakdownService = async (
         value: { $sum: { $abs: "$amount" } },
       },
     },
-    { $sort: { value: -1 } }, //
-
+    { 
+      $sort: { value: -1 } 
+    }, //
     {
       $facet: {
         topThree: [{ $limit: 3 }],
@@ -432,9 +439,9 @@ export const expensePieChartBreakdownService = async (
         },
       },
     },
-
-    { $unwind: "$categories" },
-
+    { 
+      $unwind: "$categories" 
+    },
     {
       $group: {
         _id: null,
@@ -485,6 +492,7 @@ export const expensePieChartBreakdownService = async (
     totalSpent: 0,
     breakdown: [],
   };
+  
   const transformedData = {
     totalSpent: convertToDollarUnit(data.totalSpent),
     breakdown: data.breakdown.map((item: any) => ({

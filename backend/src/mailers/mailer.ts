@@ -9,7 +9,8 @@ type Params = {
   from?: string;
 };
 
-const mailer_sender = `Finora <${Env.RESEND_MAILER_SENDER}>`;
+const mailer_sender = `SpendWise <${Env.RESEND_MAILER_SENDER}>`;
+
 
 export const sendEmail = async ({
   to,

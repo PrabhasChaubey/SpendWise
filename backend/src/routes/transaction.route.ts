@@ -6,12 +6,6 @@ const transactionRoutes = Router();
 
 transactionRoutes.post("/create", createTransactionController);
 
-transactionRoutes.post(
-  "/scan-receipt",
-  upload.single("receipt"),
-  scanReceiptController
-);
-
 
 transactionRoutes.post("/bulk-transaction", bulkTransactionController);
 
@@ -21,9 +15,14 @@ transactionRoutes.put("/update/:id", updateTransactionController);
 
 transactionRoutes.get("/all", getAllTransactionController);
 transactionRoutes.get("/:id", getTransactionByIdController);
+
 transactionRoutes.delete("/delete/:id", deleteTransactionController);
 transactionRoutes.delete("/bulk-delete", bulkDeleteTransactionController);
 
-
+transactionRoutes.post(
+  "/scan-receipt",
+  upload.single("receipt"),
+  scanReceiptController
+);
 
 export default transactionRoutes;

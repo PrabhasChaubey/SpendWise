@@ -1,7 +1,6 @@
 import "dotenv/config";
 //dotenv.config();
 
-
 import express from "express";
 import type { NextFunction, Request, Response } from "express";
 import cors from "cors";
@@ -28,9 +27,9 @@ const BASE_PATH = Env.BASE_PATH;
 
 // Middlewares
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 
-app.use(express.urlencoded({extended:true}));
+// app.use(express.urlencoded({extended:true}));
 
 app.use(
   cors({
@@ -68,7 +67,6 @@ app.listen(Env.PORT, async() => {
     await initializeCrons();
   }
 
-  
   console.log(
     `Server is running on port ${Env.PORT} in ${Env.NODE_ENV} mode`
   );

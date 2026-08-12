@@ -7,14 +7,16 @@ import ReportModel, { ReportStatusEnum } from "../../models/report.model.js";
 import { calulateNextReportDate } from "../../utils/helper.js";
 import { sendReportEmail } from "../../mailers/report.mailer.js";
 
+
 export const processReportJob = async () => {
+
   const now = new Date();
 
   let processedCount = 0;
   let failedCount = 0;
 
   //Today july 1, then run report for -> june 1 - 30 
-//Get Last Month because this will run on the first of the month
+  //Get Last Month because this will run on the first of the month
   const from = startOfMonth(subMonths(now, 1));
   const to = endOfMonth(subMonths(now, 1));
 
@@ -22,6 +24,7 @@ export const processReportJob = async () => {
   // const to = "2025-04-T23:00:00.000Z";
 
   try {
+
     const reportSettingCursor = ReportSettingModel.find({
       isEnabled: true,
       nextReportDate: { $lte: now },
@@ -32,6 +35,7 @@ export const processReportJob = async () => {
     console.log("Running report ");
 
     for await (const setting of reportSettingCursor) {
+
       const user = setting.userId as UserDocument;
       if (!user) {
         console.log(`User not found for setting: ${setting._id}`);
@@ -41,11 +45,13 @@ export const processReportJob = async () => {
       const session = await mongoose.startSession();
 
       try {
+        
         const report = await generateReportService(user._id.toString(), from, to);
 
         console.log(report, "resport data");
 
         let emailSent = false;
+
         if (report) {
           try {
             await sendReportEmail({
@@ -142,6 +148,7 @@ export const processReportJob = async () => {
         );
 
         processedCount++;
+        
       } catch (error) {
         console.log(`Failed to process report`, error);
         failedCount++;

@@ -2,8 +2,12 @@ import mongoose from "mongoose";
 import TransactionModel from "../../models/transaction.model.js";
 import { calculateNextOccurrence } from "../../utils/helper.js";
 
+
+
 export const processRecurringTransactions = async () => {
+
   const now = new Date();
+
   let processedCount = 0;
   let failedCount = 0;
 
@@ -16,12 +20,14 @@ export const processRecurringTransactions = async () => {
     console.log("Starting recurring proccess");
 
     for await (const tx of transactionCursor) {
+
       const nextDate = calculateNextOccurrence(
         tx.nextRecurringDate!,
         tx.recurringInterval!
       );
 
       const session = await mongoose.startSession();
+
       try {
         await session.withTransaction(
           async () => {
@@ -59,6 +65,7 @@ export const processRecurringTransactions = async () => {
         );
 
         processedCount++;
+        
       } catch (error: any) {
         failedCount++;
         console.log(`Failed reccurring tx: ${tx._id}`, error);

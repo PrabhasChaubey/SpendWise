@@ -13,7 +13,9 @@ export const updateUserService = async (
   body: UpdateUserType,
   profilePic?: Express.Multer.File
 ) => {
+
   const user = await UserModel.findById(userId);
+  
   if (!user) throw new NotFoundException("User not found");
 
   if (profilePic) {

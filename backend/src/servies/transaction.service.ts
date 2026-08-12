@@ -7,14 +7,18 @@ import { BadRequestException, NotFoundException } from "../utils/app-error.js";
 import { genAI, genAIModel } from "../config/google-ai.config.js";
 import { receiptPrompt } from "../utils/prompt.js";
 
+
+
 export const createTransactionService = async (
   body: CreateTransactionType,
   userId: string
 ) => {
+
   let nextRecurringDate: Date | undefined;
   const currentDate = new Date();
 
   if (body.isRecurring && body.recurringInterval) {
+
     const calulatedDate = calculateNextOccurrence(
       body.date,
       body.recurringInterval
@@ -107,6 +111,7 @@ export const getTransactionByIdService = async (
   userId: string,
   transactionId: string
 ) => {
+
   const transaction = await TransactionModel.findOne({
     _id: transactionId,
     userId,
@@ -121,10 +126,12 @@ export const duplicateTransactionService = async (
   userId: string,
   transactionId: string
 ) => {
+
   const transaction = await TransactionModel.findOne({
     _id: transactionId,
     userId,
   });
+
   if (!transaction) throw new NotFoundException("Transaction not found");
 
   const duplicated = await TransactionModel.create({
@@ -150,10 +157,12 @@ export const updateTransactionService = async (
   transactionId: string,
   body: UpdateTransactionType
 ) => {
+
   const existingTransaction = await TransactionModel.findOne({
     _id: transactionId,
     userId,
   });
+
   if (!existingTransaction)
     throw new NotFoundException("Transaction not found");
 
@@ -200,10 +209,12 @@ export const deleteTransactionService = async (
   userId: string,
   transactionId: string
 ) => {
+
   const deleted = await TransactionModel.findByIdAndDelete({
     _id: transactionId,
     userId,
   });
+
   if (!deleted) throw new NotFoundException("Transaction not found");
 
   return;
@@ -275,6 +286,7 @@ export const scanReceiptService = async (
     const responseData = await axios.get(file.path, {
       responseType: "arraybuffer",
     });
+    
     const base64String = Buffer.from(responseData.data).toString("base64");
 
     if (!base64String) throw new BadRequestException("Could not process file");

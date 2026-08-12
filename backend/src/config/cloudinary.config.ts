@@ -3,6 +3,9 @@ import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { Env } from "./env.config.js";
 import multer from "multer";
 
+// console.log("Cloud name:", `[${Env.CLOUDINARY_CLOUD_NAME}]`);
+// console.log("API key:", `[${Env.CLOUDINARY_API_KEY}]`);
+
 cloudinary.config({
   cloud_name: Env.CLOUDINARY_CLOUD_NAME,
   api_key: Env.CLOUDINARY_API_KEY,
@@ -12,7 +15,7 @@ cloudinary.config({
 const STORAGE_PARAMS = {
   folder: "images",
   allowed_formats: ["jpg", "png", "jpeg"],
-  rescource_type: "image" as const,
+  resource_type: "image" as const,
   quality: "auto:good" as const,
 };
 

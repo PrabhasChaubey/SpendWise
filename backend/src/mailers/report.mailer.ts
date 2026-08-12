@@ -10,8 +10,11 @@ type ReportEmailParams = {
   frequency: string;
 };
 
+
 export const sendReportEmail = async (params: ReportEmailParams) => {
+
   const { email, username, report, frequency } = params;
+  
   const html = getReportEmailTemplate(
     {
       username,
@@ -21,13 +24,13 @@ export const sendReportEmail = async (params: ReportEmailParams) => {
   );
 
   const text = `Your ${frequency} Financial Report (${report.period})
-    Income: ${formatCurrency(report.totalIncome)}
-    Expenses: ${formatCurrency(report.totalExpenses)}
-    Balance: ${formatCurrency(report.availableBalance)}
-    Savings Rate: ${report.savingsRate.toFixed(2)}%
+      Income: ${formatCurrency(report.totalIncome)}
+      Expenses: ${formatCurrency(report.totalExpenses)}
+      Balance: ${formatCurrency(report.availableBalance)}
+      Savings Rate: ${report.savingsRate.toFixed(2)}%
 
-    ${report.insights.join("\n")}
-`;
+      ${report.insights.join("\n")}
+  `;
 
   console.log(text, "text mail");
 
@@ -37,4 +40,5 @@ export const sendReportEmail = async (params: ReportEmailParams) => {
     text,
     html,
   });
+  
 };
